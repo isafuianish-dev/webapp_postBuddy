@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Buddy</title>
+<link rel="icon" type="image/png" href="media/favicon.png">
+<link rel="stylesheet" href="https://isafuianish-dev.github.io/webapp_cdnBuddy/css/tokens.css">
+<link rel="stylesheet" href="https://isafuianish-dev.github.io/webapp_cdnBuddy/css/base.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/theme-init.js" data-app="webapp_postBuddy"></script>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-icon" aria-hidden="true"><span class="icon" style="-webkit-mask-image:url(media/icon.svg);mask-image:url(media/icon.svg);"></span></span>
+      <h1>Post Buddy</h1>
+    </div>
+    <div class="topbar-actions">
+      <button id="btnSettings" class="btn btn-ghost btn-icon" title="Settings" aria-label="Settings"></button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel panel-bookmarks">
+      <div class="panel-header">
+        <input type="search" id="bookmarkSearch" placeholder="Search" class="search-input" aria-label="Search bookmarks">
+        <div class="panel-header-actions">
+          <button id="btnNewRequest" class="btn btn-primary">New Request</button>
+          <button id="btnExportBookmarks" class="btn btn-ghost btn-icon" title="Export bookmarks as JSON" aria-label="Export bookmarks"></button>
+          <label class="btn btn-ghost btn-icon file-btn" title="Import bookmarks from JSON" aria-label="Import bookmarks">
+            <span class="file-btn-icon" id="fileBtnIcon"></span>
+            <input type="file" id="fileImportBookmarks" accept="application/json">
+          </label>
+        </div>
+      </div>
+      <ul id="bookmarkList" class="bookmark-list"></ul>
+      <p class="empty-hint sidebar-sample-hint" id="sidebarLoadSampleHint" hidden>No bookmarks yet. <a href="#" id="linkLoadSampleSidebar" class="link-accent">Load sample</a>.</p>
+    </aside>
+
+    <main class="panel panel-main">
+      <div class="request-response-grid" id="requestResponseGrid" hidden>
+        <section class="request-panel">
+          <div class="panel-title-row">
+            <h2 class="panel-title">Request</h2>
+            <div class="curl-trigger" id="curlTrigger">
+              <button type="button" class="curl-trigger-btn" id="curlTriggerBtn" aria-label="View as cURL" title="View as cURL" aria-haspopup="true"></button>
+              <div class="curl-popover">
+                <div class="curl-popover-card">
+                  <div class="curl-popover-header">
+                    <span>cURL</span>
+                    <button type="button" class="btn btn-ghost btn-sm btn-icon" id="btnCopyCurl" title="Copy" aria-label="Copy cURL command"></button>
+                  </div>
+                  <pre class="curl-popover-body" id="curlCommand"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Method</span>
+            <div id="methodSelector" class="method-selector"></div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="urlInput">URL</label>
+            <input type="text" id="urlInput" class="form-control" placeholder="https://api.example.com/endpoint" autocomplete="off" spellcheck="false">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="payloadInput">Payload</label>
+            <textarea id="payloadInput" class="payload-input" placeholder='{"key": "value"}' spellcheck="false"></textarea>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Authentication</span>
+            <div id="authSelector" class="method-selector"></div>
+            <textarea id="authKeyInput" class="payload-input auth-key-input" placeholder="No authentication" spellcheck="false" disabled></textarea>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Header</span>
+            <div id="headerRows" class="header-rows"></div>
+            <button id="btnAddHeader" type="button" class="btn btn-ghost btn-sm"></button>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Request</span>
+            <div class="request-actions">
+              <button id="btnBookmark" type="button" class="btn btn-ghost"></button>
+              <button id="btnSend" type="button" class="btn btn-primary"></button>
+              <button id="btnCancel" type="button" class="btn btn-ghost"></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="response-panel">
+          <div class="panel-title-row">
+            <h2 class="panel-title">Response</h2>
+          </div>
+
+          <div id="responseEmpty" class="empty-hint response-empty">Send a request to see the response here.</div>
+
+          <div id="responseContent" class="response-content" hidden>
+            <div class="response-meta" id="responseMeta"></div>
+            <div class="response-tabs">
+              <button type="button" class="response-tab active" id="tabBody" data-tab="body">Body</button>
+              <button type="button" class="response-tab" id="tabHeaders" data-tab="headers">Headers</button>
+            </div>
+            <div class="response-body-wrap" id="bodyView">
+              <pre id="responseBody" class="response-body"></pre>
+              <button id="btnCopyBody" type="button" class="btn btn-ghost btn-sm btn-icon response-copy" title="Copy response body" aria-label="Copy response body"></button>
+            </div>
+            <div class="response-headers" id="responseHeaders" hidden></div>
+          </div>
+        </section>
+      </div>
+      <div class="empty-hint main-empty-hint" id="mainEmptyHint"></div>
+    </main>
+  </div>
+</div>
+
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/utils.js"></script>
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/icons.js"></script>
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/modal.js"></script>
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/theme.js"></script>
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/settings.js"></script>
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/markdown.js"></script>
+<script src="https://isafuianish-dev.github.io/webapp_cdnBuddy/js/manual.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
